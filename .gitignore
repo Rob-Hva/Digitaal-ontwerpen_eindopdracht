@@ -1,0 +1,44 @@
+# Quartus-generated folders
+db/
+incremental_db/
+output_files/
+work/
+
+# Negeer de extra bestanden van simulation
+simulation/questa/gate_work
+simulation/**/rtl_work
+simulation/**/*.bak*
+simulation/**/*.dqb
+simulation/**/*.ini
+simulation/**/*.qtl
+simulation/**/*.sft
+simulation/**/*_transcript
+simulation/**/*.vho
+simulation/**/*.wlf
+simulation/**/wlf*
+
+# Backup and report files
+*.rpt
+*.bak
+*.summary
+*.smsg
+*.qws
+*.chg
+*.cmp
+*.eqn
+*.fit
+*.jdi
+*.pin
+*.qws
+*.smsg
+*.tcl
+
+# Programming files (can be regenerated)
+*.sof
+*.pof
+*.jic
+
+# Other temporary / tool files
+*.mpf
+*.cr.mti
+transcript
