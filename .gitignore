@@ -41,4 +41,5 @@ simulation/**/wlf*
 # Other temporary / tool files
 *.mpf
 *.cr.mti
+*.vo
 transcript
