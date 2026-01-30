@@ -8,39 +8,40 @@ end entity Button_switch_testbench;
 architecture testbench of Button_switch_testbench is
 	component Button_switch is
 		
-		generic (N 	: integer := 5;		-- amount of buttons
-			 M 	: integer := 8);	-- debounce samples per button
+		generic (BTN_AMT 		: integer := 5;		-- amount of buttons
+			 DBNC_SMPL_LNGTH 	: integer := 8);	-- debounce samples per button
 
 		port(	clk 		: in 	std_logic;
 		  	rst_n 		: in 	std_logic;
-		  	button 		: in	std_logic_vector(N-1 downto 0);
-		  	pressed		: out 	std_logic_vector(N-1 downto 0);
-		  	pressed_event 	: out 	std_logic_vector(N-1 downto 0);
-		  	released_event 	: out 	std_logic_vector(N-1 downto 0);
-			switch		: out 	std_logic_vector(N-1 downto 0));
+		  	button 		: in	std_logic_vector(BTN_AMT-1 downto 0);
+		  	pressed		: out 	std_logic_vector(BTN_AMT-1 downto 0);
+		  	pressed_event 	: out 	std_logic_vector(BTN_AMT-1 downto 0);
+		  	released_event 	: out 	std_logic_vector(BTN_AMT-1 downto 0);
+			switch		: out 	std_logic_vector(BTN_AMT-1 downto 0));
 
 	end component;
 	
-	constant N : integer := 5;
-	constant M : integer := 8; 
+	constant BTN_AMT : integer := 5;
+	constant DBNC_SMPL_LNGTH : integer := 8; 
 	constant CLOCK_PERIOD : time := 20 ns;
 	constant AMOUNT_OF_LOOPS : integer := 10;
 
 	signal clk 	: std_logic := '1';
 	signal rst_n 	: std_logic := '1';
-	signal button	: std_logic_vector(N-1 downto 0) := (others => '1');
+	signal button	: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
 	
-	signal pressed 		: std_logic_vector(N-1 downto 0) := (others => '1');
-	signal pressed_event 	: std_logic_vector(N-1 downto 0) := (others => '1');
-	signal released_event 	: std_logic_vector(N-1 downto 0) := (others => '1');
+	signal pressed 		: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
+	signal pressed_event 	: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
+	signal released_event 	: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
 
-	signal switch 	: std_logic_vector(N-1 downto 0) := (others => '1');
+	signal switch 	: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
 
 begin
 
 	DUT : Button_switch
 
-		generic map(N => N)
+		generic map(	BTN_AMT => BTN_AMT,
+				DBNC_SMPL_LNGTH => DBNC_SMPL_LNGTH)
 		port map(clk => clk,
 	 		 rst_n => rst_n,
 			 button => button,
