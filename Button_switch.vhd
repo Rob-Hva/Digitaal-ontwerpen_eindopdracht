@@ -5,15 +5,15 @@ use ieee.numeric_std.all;
 
 entity Button_Switch is
 
-	generic (N 	: integer := 5;	-- amount of buttons
-				M : integer := 8);	-- debounce samples per button	
+	generic (BTN_AMT 	: integer := 5;	-- amount of buttons
+				DBNC_SMPL_LNGTH  : integer := 8);	-- debounce samples per button	
 	port(clk 				: in 	std_logic;
 		  rst_n 				: in 	std_logic;
-		  button 			: in 	std_logic_vector(N-1 downto 0);
-		  pressed			: out std_logic_vector(N-1 downto 0);
-		  pressed_event 	: out std_logic_vector(N-1 downto 0);
-		  released_event 	: out std_logic_vector(N-1 downto 0);
-		  switch 			: out std_logic_vector(N-1 downto 0));
+		  button 			: in 	std_logic_vector(BTN_AMT-1 downto 0);
+		  pressed			: out std_logic_vector(BTN_AMT-1 downto 0);
+		  pressed_event 	: out std_logic_vector(BTN_AMT-1 downto 0);
+		  released_event 	: out std_logic_vector(BTN_AMT-1 downto 0);
+		  switch 			: out std_logic_vector(BTN_AMT-1 downto 0));
 		  
 end entity Button_Switch;
 
@@ -21,20 +21,20 @@ architecture behaviour of Button_Switch is
 
 	constant read_threshold : integer := 50000; 	-- 1ms/20ns = 50000.
 
-	signal pressed_ff				: std_logic_vector(N-1 downto 0) := (others => '1');
-	signal pressed_ff_prev 		: std_logic_vector(N-1 downto 0) := (others => '1');
-	signal pressed_event_ff		: std_logic_vector(N-1 downto 0) := (others => '1');
-	signal released_event_ff	: std_logic_vector(N-1 downto 0) := (others => '1');
+	signal pressed_ff				: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
+	signal pressed_ff_prev 		: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
+	signal pressed_event_ff		: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
+	signal released_event_ff	: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
 	
 	signal clk_count	 		: unsigned(16-1 downto 0);										-- 16-bits are needed to store 50000.
 	signal sample_pulse		: std_logic := '0';												-- this signal wil be the divided clk.
-	signal btn_read		 	: std_logic_vector(N-1 downto 0) := (others => '1');	-- Used to store the read values of each button.
+	signal btn_read		 	: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');	-- Used to store the read values of each button.
 	
 	-- Used to store the last few read values of each button.
-   type btn_matrix_type is array (0 to N-1) of std_logic_vector(M-1 downto 0);
+   type btn_matrix_type is array (0 to BTN_AMT-1) of std_logic_vector(DBNC_SMPL_LNGTH-1 downto 0);
    signal btn_matrix		:	btn_matrix_type := (others => (others => '1'));	
 	
-	signal switch_ff	: std_logic_vector(N-1 downto 0) := (others => '1');
+	signal switch_ff	: std_logic_vector(BTN_AMT-1 downto 0) := (others => '1');
 	
 begin
 
@@ -86,13 +86,13 @@ begin
 		elsif rising_edge(clk) then
 		
 			if sample_pulse = '1' then
-				for i in 0 to N-1 loop
-					btn_matrix(i) <= btn_matrix(i)(M-2 downto 0) & btn_read(i);	-- Push the read values into the matrix to temporarily store them.
+				for i in 0 to BTN_AMT-1 loop
+					btn_matrix(i) <= btn_matrix(i)(DBNC_SMPL_LNGTH-2 downto 0) & btn_read(i);	-- Push the read values into the matrix to temporarily store them.
 				end loop;
 			end if;
 			
 			-- Check if button is low for te entire [M]ms.
-			for i in 0 to N-1 loop
+			for i in 0 to BTN_AMT-1 loop
 				if btn_matrix(i) = (btn_matrix(i)'range => '0') then
 					pressed_ff_prev(i) <= pressed_ff(i);
 					pressed_ff(i) <= '0';
@@ -116,7 +116,7 @@ begin
 			
 		elsif rising_edge(clk) then
 		
-			for i in 0 to N-1 loop
+			for i in 0 to BTN_AMT-1 loop
 				-- Check if button (i) is being pressed.
 				if (pressed_ff(i) = '0') AND (pressed_ff_prev(i) = '1') then
 					pressed_event_ff(i) <= '0';
@@ -140,11 +140,10 @@ begin
 			
 		if rst_n = '0' then
 			switch_ff			<= (others =>'1');
-			pressed_ff_prev	<= (others =>'1');
 	
 		elsif rising_edge(clk) then
 		
-			for i in 0 to N-1 loop
+			for i in 0 to BTN_AMT-1 loop
 				if pressed_ff(i) = '0' AND pressed_ff_prev(i) = '1' then
 				
 					-- button pressed! toggle switch
