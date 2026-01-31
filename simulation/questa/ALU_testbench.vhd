@@ -11,30 +11,30 @@ architecture testbench of ALU_testbench is
 
 	component ALU is 
 
-		generic (N : integer := 4);
+		generic (BIT_AMT : integer := 4);
 
 		port(	op 		: in  unsigned(4-1 downto 0);
-		  	a 		: in  std_logic_vector(N-1 downto 0);
-		  	b 		: in  std_logic_vector(N-1 downto 0);
-		  	z		: out std_logic_vector(N-1 downto 0);
+		  	a 		: in  std_logic_vector(BIT_AMT-1 downto 0);
+		  	b 		: in  std_logic_vector(BIT_AMT-1 downto 0);
+		  	z		: out std_logic_vector(BIT_AMT-1 downto 0);
 		  	carry_in 	: in  std_logic;
 		  	carry_out 	: out  std_logic);
 	end component;
 
-	constant N : integer := 4;
-	constant possible_values : integer := 2 ** N; -- Amount of possible values a N-bit vector can represent.
+	constant BIT_AMT : integer := 4;
+	constant possible_values : integer := 2 ** BIT_AMT; -- Amount of possible values a N-bit vector can represent.
 
 	signal op	 	: unsigned(4-1 downto 0) := (others => '0');
-	signal a 	 	: std_logic_vector(N-1 downto 0) := (others => '0');
-	signal b 	 	: std_logic_vector(N-1 downto 0) := (others => '0');
-	signal z 	 	: std_logic_vector(N-1 downto 0) := (others => '0');
+	signal a 	 	: std_logic_vector(BIT_AMT-1 downto 0) := (others => '0');
+	signal b 	 	: std_logic_vector(BIT_AMT-1 downto 0) := (others => '0');
+	signal z 	 	: std_logic_vector(BIT_AMT-1 downto 0) := (others => '0');
 	signal carry_in 	: std_logic := '0';
 	signal carry_out	: std_logic := '0';
 
 begin
 	DUT : ALU
 		
-		generic map(N => N)
+		generic map(BIT_AMT => BIT_AMT)
 		port map(op => op,
 	 		 a => a,
 			 b => b,
@@ -159,7 +159,7 @@ begin
 		a <= "0000";
 		for i in 0 to possible_values - 1 loop
 			wait for 10 ns;
-			a <= std_logic_vector(to_unsigned(i, N) + 1);
+			a <= std_logic_vector(to_unsigned(i, BIT_AMT) + 1);
 		end loop;
 
 		-- op-code is "1101" ROL_A
@@ -167,7 +167,7 @@ begin
 		a <= "0000";
 		for i in 0 to possible_values - 1 loop
 			wait for 10 ns;
-			a <= std_logic_vector(to_unsigned(i, N) + 1);
+			a <= std_logic_vector(to_unsigned(i, BIT_AMT) + 1);
 		end loop;
 
 		-- op-code is "1110" SHR_A
@@ -175,7 +175,7 @@ begin
 		a <= "0000";
 		for i in 0 to possible_values - 1 loop
 			wait for 10 ns;
-			a <= std_logic_vector(to_unsigned(i, N) + 1);
+			a <= std_logic_vector(to_unsigned(i, BIT_AMT) + 1);
 		end loop;
 
 		-- op-code is "1111" ROR_A
@@ -183,7 +183,7 @@ begin
 		a <= "0000";
 		for i in 0 to possible_values - 1 loop
 			wait for 10 ns;
-			a <= std_logic_vector(to_unsigned(i, N) + 1);
+			a <= std_logic_vector(to_unsigned(i, BIT_AMT) + 1);
 		end loop;
 
 		wait;
